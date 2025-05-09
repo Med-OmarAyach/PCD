@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room Monitoring Dashboard</title>
+    {% load static  %}
+    <link rel="stylesheet" href="{% static 'MyCSS.css'%}">
+   
+</head>
+<body>
+<div class="data-source-indicator">Loading...</div>
+
+<div class="hamburger">
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="logo-container">
+            <div class="logo">RM</div>
+            <div class="app-name">Room Monitor</div>
+        </div>
+
+        <button class="sidebar-button active" data-section="home">
+            <i>🏠</i>
+            <span>Home</span>
+        </button>
+
+        <button class="sidebar-button" data-section="rooms">
+            <i>🚪</i>
+            <span>Rooms</span>
+        </button>
+
+        <button class="sidebar-button" data-section="history">
+            <i>📊</i>
+            <span>History</span>
+        </button>
+
+        <button class="sidebar-button" data-section="logout">
+            <i>🚪</i>
+            <span>Log out</span>
+        </button>
+    </div>
+
+    <div class="main-content">
+        <div id="home" class="content-section active">
+            <div class="home-content">
+                <div class="welcome-container">
+                    <h1 class="welcome-text">Welcome to Room Monitor</h1>
+                    <p class="welcome-subtitle">
+                        Monitor real-time activity in all your rooms
+                    </p>
+
+                    <button class="btn" onclick="showSection('rooms')">
+                        <span>View Rooms</span>
+                        <span>→</span>
+                    </button>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">Active Rooms</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Sensors</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-value">98%</div>
+                            <div class="stat-label">System Status</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="rooms" class="content-section">
+            <div class="section-header">
+                <h1 class="section-title">Rooms Overview</h1>
+                <p class="section-subtitle">
+                    Monitor activity and signals across all rooms
+                </p>
+            </div>
+
+            <!-- Room Cards Section -->
+            <div class="rooms-grid">
+                <div class="room-card" id="room1-card" onclick="showRoomDetails('ROOM 1')">
+                    <div class="room-status"></div>
+                    <h2 class="room-title">ROOM 1</h2>
+                </div>
+                <div class="room-card" id="room2-card" onclick="showRoomDetails('ROOM 2')">
+                    <div class="room-status"></div>
+                    <h2 class="room-title">ROOM 2</h2>
+                </div>
+                <div class="room-card" id="room3-card" onclick="showRoomDetails('ROOM 3')">
+                    <div class="room-status"></div>
+                    <h2 class="room-title">ROOM 3</h2>
+                </div>
+                <div class="room-card" id="room4-card" onclick="showRoomDetails('ROOM 4')">
+                    <div class="room-status"></div>
+                    <h2 class="room-title">ROOM 4</h2>
+                </div>
+            </div>
+
+            <!-- Room Details Section (Initially hidden) -->
+            <div id="room-details" class="room-details" style="display:none;">
+                <h2 id="room-title"></h2>
+                <div id="room-data"></div>
+                <p id="anomaly-type"></p>
+                <button class="btn" onclick="document.getElementById('room-details').style.display = 'none'">
+                    Close Details
+                </button>
+            </div>
+
+        </div>
+
+        <div id="history" class="content-section">
+            <div class="section-header">
+                <h1 class="section-title">Activity History</h1>
+                <p class="section-subtitle">Anomaly events log</p>
+            </div>
+
+            <div class="history-container">
+                <div class="history-header">
+                    <h2>Room Anomaly History</h2>
+                    <div class="anomaly-filters">
+                        <button class="filter-button" data-filter="all">All Events</button>
+                        <button class="filter-button active" data-filter="anomaly">Anomalies Only</button>
+                        <select id="room-selector" class="room-selector">
+                            <option value="ROOM 1">ROOM 1</option>
+                            <option value="ROOM 2">ROOM 2</option>
+                            <option value="ROOM 3">ROOM 3</option>
+                            <option value="ROOM 4">ROOM 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="loading-history">
+                    <div class="spinner"></div>
+                    <span>Loading history data...</span>
+                </div>
+
+                <table class="anomaly-history">
+                    <thead>
+                    <tr>
+                        <th class="time-col">Timestamp</th>
+                        <th class="temp-col">Temperature (°F)</th>
+                        <th class="status-col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="anomaly-log">
+                    <!-- This will be filled dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="logout" class="content-section">
+            <div class="logout-container">
+                <div class="logout-icon">🔒</div>
+                <h2 class="logout-title">Ready to leave?</h2>
+                <p class="logout-text">
+                    Are you sure you want to log out from Room Monitor?
+                </p>
+
+                <div class="button-group">
+                    <button class="btn" onclick="showSection('home')">Cancel</button>
+                    <a href="{% url 'sign_in' %}" class="btn btn-logout">Confirm Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="room-details" class="room-details" style="display:none;">
+    <div id="loading-indicator" class="loading-indicator">
+        <p>Loading...</p>
+        <div class="spinner"></div> <!-- Simple loading spinner -->
+    </div>
+    <h2 id="room-title"></h2>
+    <div id="room-data"></div>
+    <p id="anomaly-type"></p>
+    <button class="btn" onclick="document.getElementById('room-details').style.display = 'none'">
+        Close Details
+    </button>
+</div>
+
+</div>
+<script>
+    // Global variables
+    let updateInterval = null;
+    let roomData = null;
+    let secondsToNextUpdate = 60;
+    let countdownTimer = null;
+    let currentDataSource = ""; // To track data source
+    let selectedRoom = "ROOM 1"; // Track which room's history is being displayed
+    let showOnlyAnomalies = true; // Default to showing only anomalies
+
+    // Ensure that the page load event does not conflict with navigation
+    window.onload = function() {
+        console.log("Page loaded, initializing...");
+
+        // Set up the room card click events
+        setupRoomCards();
+
+        // Set up filter buttons
+        setupFilterButtons();
+
+        // Initialize the sidebar buttons
+        initializeSidebar();
+
+        // Set up room selector for history view
+        setupRoomSelector();
+
+        // Start with the home view
+        showSection('home');
+
+        // Start the data update process
+        startDataUpdates();
+    };
+
+    function initializeSidebar() {
+        // Add event listeners to sidebar buttons
+        const sidebarButtons = document.querySelectorAll('.sidebar-button');
+        sidebarButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                showSection(sectionId);
+            });
+        });
+
+        // Handle mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        if (hamburger) {
+            hamburger.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('active');
+            });
+        }
+    }
+
+    function showSection(sectionId) {
+        // Hide all sections
+        const contentSections = document.querySelectorAll(".content-section");
+        contentSections.forEach((section) => section.classList.remove("active"));
+
+        // Show the requested section
+        document.getElementById(sectionId).classList.add("active");
+
+        // Update active state in sidebar
+        const navButtons = document.querySelectorAll(".sidebar-button");
+        navButtons.forEach((btn) => {
+            if (btn.getAttribute("data-section") === sectionId) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+
+        // Close sidebar on mobile after click
+        if (window.innerWidth <= 768) {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.classList.remove("active");
+        }
+
+        // If switching to rooms section, update room data
+        if (sectionId === 'rooms') {
+            fetchRoomData(true);
+        }
+
+        // If switching to history section, load history data for the selected room
+        if (sectionId === 'history') {
+            loadRoomHistory(selectedRoom);
+        }
+    }
+
+    function startDataUpdates() {
+        // Fetch data immediately
+        fetchRoomData(true);
+
+        // Create a countdown timer that updates every second
+        countdownTimer = setInterval(() => {
+            secondsToNextUpdate--;
+
+            // Update countdown on room cards if visible
+            updateCountdownDisplay();
+
+            // When we reach zero, fetch new data
+            if (secondsToNextUpdate <= 0) {
+                fetchRoomData(false);
+                secondsToNextUpdate = 60; // Reset countdown
+            }
+        }, 1000);
+    }
+
+    function updateCountdownDisplay() {
+        // Update the countdown display only if we're on the rooms section
+        if (document.getElementById('rooms').classList.contains('active')) {
+            const countdownElements = document.querySelectorAll('.room-countdown');
+            countdownElements.forEach(element => {
+                element.textContent = `Next update in ${secondsToNextUpdate}s`;
+            });
+        }
+    }
+
+    function setupRoomCards() {
+        const roomCards = document.querySelectorAll('.room-card');
+        roomCards.forEach(card => {
+            // Get room ID from card title
+            const roomTitle = card.querySelector('.room-title').textContent;
+            card.onclick = () => showRoomDetails(roomTitle);
+
+            // Add countdown display
+            if (!card.querySelector('.room-countdown')) {
+                const countdown = document.createElement('div');
+                countdown.className = 'room-countdown';
+                countdown.textContent = 'Next update in 60s';
+                card.appendChild(countdown);
+            }
+        });
+        console.log("Room cards setup completed");
+    }
+
+    function setupRoomSelector() {
+        const roomSelector = document.getElementById('room-selector');
+        if (roomSelector) {
+            roomSelector.addEventListener('change', function() {
+                selectedRoom = this.value;
+                loadRoomHistory(selectedRoom);
+            });
+
+            // Set initial value
+            roomSelector.value = selectedRoom;
+        }
+    }
+
+    function updateDataSourceIndicator(dataSource) {
+        const indicator = document.querySelector('.data-source-indicator');
+        if (indicator) {
+            // Update text and styling based on data source
+            if (dataSource === "CSV") {
+                indicator.textContent = "Using CSV Data";
+                indicator.className = "data-source-indicator data-source-csv";
+            } else {
+                indicator.textContent = "Using Sample Data";
+                indicator.className = "data-source-indicator data-source-sample";
+            }
+
+            // Update global variable to track data source
+            currentDataSource = dataSource;
+        }
+    }
+
+    function fetchRoomData(forceUpdate = false) {
+        console.log("Fetching room data...");
+
+        // Show loading state on room cards
+        const roomCards = document.querySelectorAll('.room-card');
+        roomCards.forEach(card => {
+            const statusIndicator = card.querySelector('.room-status');
+            if (statusIndicator) statusIndicator.classList.add('loading');
+        });
+
+        // Build the API URL
+        let apiUrl = '/api/get_room_data/';
+        if (forceUpdate) {
+            apiUrl += '?force_update=true';
+        }
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Room data received:", data);
+
+                // Store the room data globally
+                roomData = data.room_data;
+
+                // Reset countdown if provided by server
+                if (data.next_update) {
+                    secondsToNextUpdate = 60 - data.next_update;
+                } else {
+                    secondsToNextUpdate = 60;
+                }
+
+                // Update the data source indicator
+                updateDataSourceIndicator(data.data_source);
+
+                // Update the room cards
+                updateRoomCards();
+
+                // Remove loading state
+                roomCards.forEach(card => {
+                    const statusIndicator = card.querySelector('.room-status');
+                    if (statusIndicator) statusIndicator.classList.remove('loading');
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching room data:', error);
+
+                // Remove loading state on error
+                roomCards.forEach(card => {
+                    const statusIndicator = card.querySelector('.room-status');
+                    if (statusIndicator) statusIndicator.classList.remove('loading');
+                });
+            });
+    }
+
+    function updateRoomCards() {
+        if (!roomData) return;
+
+        roomData.forEach(room => {
+            const roomNumber = room.room.split(' ')[1];
+            const roomElement = document.getElementById(`room${roomNumber}-card`);
+
+            if (roomElement) {
+                // Update room title and status
+                const titleElement = roomElement.querySelector('.room-title');
+                const statusElement = roomElement.querySelector('.room-status');
+                const anomalyKey = `Anomaly_Label_R${roomNumber}`;
+                const anomalyType = room[anomalyKey];
+
+                // Set title and status color
+                titleElement.textContent = room.room;
+                statusElement.style.backgroundColor = getStatusColor(anomalyType);
+                statusElement.setAttribute('title', anomalyType);
+
+                // Add or update temperature display
+                let tempDisplay = roomElement.querySelector('.room-temperature');
+                if (!tempDisplay) {
+                    tempDisplay = document.createElement('div');
+                    tempDisplay.className = 'room-temperature';
+                    roomElement.appendChild(tempDisplay);
+                }
+
+                tempDisplay.innerHTML = `
+            <div>T1: ${room.temperature1}°F</div>
+            <div>T2: ${room.temperature2}°F</div>
+            <div>T3: ${room.temperature3}°F</div>
+            <div class="anomaly-tag">${anomalyType}</div>
+            `;
+
+                // Apply color to anomaly tag
+                const anomalyTag = tempDisplay.querySelector('.anomaly-tag');
+                anomalyTag.style.backgroundColor = getStatusColor(anomalyType);
+            }
+        });
+    }
+
+    function getStatusColor(anomalyType) {
+        switch (anomalyType) {
+            case 'Normal': return 'var(--success, green)';
+            case 'Network': return 'var(--warning, orange)';
+            case 'Security': return 'var(--danger, red)';
+            case 'Sensor': return 'var(--primary, blue)';
+            default: return 'var(--text-muted, gray)';
+        }
+    }
+
+    function getStatusClass(anomalyType) {
+        switch (anomalyType) {
+            case 'Normal': return 'status-normal';
+            case 'Network': return 'status-network';
+            case 'Security': return 'status-security';
+            case 'Sensor': return 'status-sensor';
+            default: return '';
+        }
+    }
+
+    function showRoomDetails(roomId) {
+        // Update the selected room for history viewing
+        selectedRoom = roomId;
+
+        // Show loading indicator
+        const roomDetails = document.getElementById('room-details');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        if (!roomDetails || !loadingIndicator) {
+            console.error("Required elements not found");
+            return;
+        }
+
+        roomDetails.style.display = 'block';
+        loadingIndicator.style.display = 'flex';
+
+        // Find the room data
+        const roomNumber = roomId.split(' ')[1];
+        const room = roomData.find(r => r.room === roomId);
+
+        if (!room) {
+            console.error(`Room data not found for ${roomId}`);
+            loadingIndicator.style.display = 'none';
+            roomDetails.style.display = 'none';
+            return;
+        }
+
+        // Set room title
+        const titleElement = document.getElementById('room-title');
+        titleElement.textContent = roomId;
+
+        // Clear previous data
+        const dataElement = document.getElementById('room-data');
+        dataElement.innerHTML = '';
+
+        // Add room data
+        const temperatureData = `
+    <p>Sensor 1 Temperature: ${room.temperature1}°F</p>
+    <p>Sensor 2 Temperature: ${room.temperature2}°F</p>
+    <p>Sensor 3 Temperature: ${room.temperature3}°F</p>
+    <p>Last Updated: ${room.timestamp || 'Unknown'}</p>
+    <button class="btn view-history-btn" onclick="showSection('history')">View Full History</button>
+    `;
+        dataElement.innerHTML = temperatureData;
+
+        // Set anomaly type with color coding
+        const anomalyKey = `Anomaly_Label_R${roomNumber}`;
+        const anomalyType = room[anomalyKey] || 'Unknown';
+
+        const anomalyElement = document.getElementById('anomaly-type');
+        anomalyElement.textContent = `Status: ${anomalyType}`;
+        anomalyElement.style.color = getStatusColor(anomalyType);
+
+        // Hide loading indicator
+        loadingIndicator.style.display = 'none';
+    }
+
+    function loadRoomHistory(roomId) {
+        console.log(`Loading history for ${roomId}`);
+
+        // Update the selected room
+        selectedRoom = roomId;
+
+        // Update the room selector if available
+        const roomSelector = document.getElementById('room-selector');
+        if (roomSelector) {
+            roomSelector.value = roomId;
+        }
+
+        // Update the section title to show which room we're viewing
+        const sectionTitle = document.querySelector('#history .section-title');
+        if (sectionTitle) {
+            sectionTitle.textContent = `${roomId} Activity History`;
+        }
+
+        // Show loading state
+        const loadingHistory = document.querySelector('.loading-history');
+        const anomalyTable = document.querySelector('.anomaly-history');
+
+        if (loadingHistory && anomalyTable) {
+            loadingHistory.style.display = 'flex';
+            anomalyTable.style.display = 'none';
+        }
+
+        const roomNumber = roomId.split(' ')[1];
+        const apiUrl = `/api/get_room_history/?room=${roomNumber}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("History data received:", data);
+                updateAnomalyTable(data.history);
+
+                // Hide loading indicator, show table
+                if (loadingHistory && anomalyTable) {
+                    loadingHistory.style.display = 'none';
+                    anomalyTable.style.display = 'table';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching history data:', error);
+                // Use fallback data
+                const fallbackHistory = generateFallbackHistory(roomNumber);
+                updateAnomalyTable(fallbackHistory);
+
+                // Hide loading indicator, show table
+                if (loadingHistory && anomalyTable) {
+                    loadingHistory.style.display = 'none';
+                    anomalyTable.style.display = 'table';
+                }
+            });
+    }
+
+    // Generate fallback history data
+    function generateFallbackHistory(roomNumber) {
+        const history = [];
+        const now = new Date();
+        const dataPoints = 30; // Generate 30 data points
+
+        for (let i = 0; i < dataPoints; i++) {
+            let formattedDate = 'Unknown time';
+            if (point.timestamp) {
+                const date = new Date(point.timestamp);
+                if (!isNaN(date)) {
+                    formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                }
+            }
+
+            date.setMinutes(date.getMinutes() - (i * 10)); // 10 minutes between data points
+
+            // 20% chance of anomaly
+            const isAnomaly = Math.random() > 0.8;
+            let anomalyType = 'Normal';
+
+            if (isAnomaly) {
+                // Randomly choose anomaly type
+                const anomalyTypes = ['Network', 'Security', 'Sensor'];
+                anomalyType = anomalyTypes[Math.floor(Math.random() * anomalyTypes.length)];
+            }
+
+            history.push({
+                timestamp: date.toISOString(),
+                temperature1: (22 + Math.random() * 3).toFixed(1),
+                temperature2: (22 + Math.random() * 3).toFixed(1),
+                temperature3: (22 + Math.random() * 3).toFixed(1),
+                [`Anomaly_Label_R${roomNumber}`]: anomalyType
+            });
+        }
+
+        return history;
+    }
+
+    // Update anomaly table with data
+    function updateAnomalyTable(historyData) {
+        const anomalyLog = document.getElementById('anomaly-log');
+        if (!anomalyLog) return;
+
+        // Clear previous entries
+        anomalyLog.innerHTML = '';
+
+        // Sort history data by timestamp (newest first)
+        historyData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        // Filter data if needed
+        let displayData = historyData;
+        if (showOnlyAnomalies) {
+            // Filter to only show anomaly events
+            const roomNumber = selectedRoom.split(' ')[1];
+            const anomalyKey = `Anomaly_Label_R${roomNumber}`;
+            displayData = historyData.filter(point => point[anomalyKey] !== 'Normal');
+        }
+
+        if (displayData.length === 0) {
+            // Show message if no data to display
+            const noDataRow = document.createElement('tr');
+            noDataRow.innerHTML = `<td colspan="3" class="no-anomalies">No anomalies detected in the selected timeframe</td>`;
+            anomalyLog.appendChild(noDataRow);
+            return;
+        }
+
+        // Create table rows
+        displayData.forEach(point => {
+            const roomNumber = selectedRoom.split(' ')[1];
+            const anomalyKey = `Anomaly_Label_R${roomNumber}`;
+            const anomalyType = point[anomalyKey] || 'Normal';
+
+            // Format timestamp
+            const date = new Date(point.timestamp);
+            const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+
+            // Format temperatures
+            const temperatures = `T1: ${point.temperature1}°F, T2: ${point.temperature2}°F, T3: ${point.temperature3}°F`;
+
+            // Create row
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="time-col">${formattedDate}</td>
+                <td class="temp-col">${temperatures}</td>
+                <td class="status-col">
+                    <span class="status-tag ${getStatusClass(anomalyType)}">${anomalyType}</span>
+                </td>
+            `;
+
+            anomalyLog.appendChild(row);
+        });
+    }
+
+    // Setup event listeners for filter buttons
+    function setupFilterButtons() {
+        const filterButtons = document.querySelectorAll('.filter-button[data-filter]');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Get the filter type
+                const filterType = this.getAttribute('data-filter');
+
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+
+                // Add active class to clicked button
+                this.classList.add('active');
+
+                // Update filter setting
+                showOnlyAnomalies = filterType === 'anomaly';
+
+                // Reload history with new filter
+                loadRoomHistory(selectedRoom);
+            });
+        });
+    }
+</script>
+</body>
+</html>

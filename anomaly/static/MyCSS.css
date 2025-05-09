@@ -1,0 +1,355 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* ========== Base ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+:root {
+    --primary: #ff3366;
+    --primary-dark: #e32958;
+    --secondary: #ff4d7e;
+    --accent: #ff3366;
+    --bg-dark: #222222;
+    --bg-medium: #333333;
+    --bg-light: #444444;
+    --text-light: #f8f9fa;
+    --text-muted: #bbbbbb;
+    --success: #42d392;
+    --warning: #f7cc4a;
+    --danger: #ff4560;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* ========== Spinner & Loading ========== */
+.spinner, .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-indicator,
+#loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 20px;
+    height: 100px;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-medium);
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    height: 100vh;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.sidebar-button {
+    background-color: transparent;
+    color: var(--text-muted);
+    padding: 0.8rem 1.2rem;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.sidebar-button.active {
+    background-color: var(--bg-dark);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(255, 51, 102, 0.3);
+}
+
+/* ========== Main Content ========== */
+.main-content {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+    background: var(--bg-dark);
+    margin-left: 260px;
+}
+
+.content-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.content-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== Room Cards ========== */
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.room-card {
+    background-color: var(--bg-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    border: 2px solid var(--primary);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--secondary);
+}
+
+.room-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.room-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--success);
+}
+
+/* ========== Room Details ========== */
+#room-details {
+    background-color: var(--bg-light);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--primary);
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+#room-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+#room-data {
+    padding: 1rem;
+    background-color: var(--bg-medium);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+#room-data p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin: 0.8rem 0;
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#anomaly-type {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--bg-medium);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: -100%;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 5rem;
+    }
+
+    .pagination-controls,
+    .time-navigation-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .time-navigation-controls button {
+        width: 100%;
+    }
+}
+.data-source-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1000;
+    color: white;
+}
+.data-source-csv {
+    background-color: #28a745;
+}
+.data-source-sample {
+    background-color: #dc3545;
+}
+/* Anomaly History Table Styles */
+.anomaly-history {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.anomaly-history th {
+    background-color: #f5f5f5;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid #ddd;
+}
+.anomaly-history td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+.anomaly-history tbody tr:hover {
+    background-color: #f9f9f9;
+}
+.anomaly-history .time-col {
+    width: 30%;
+}
+.anomaly-history .temp-col {
+    width: 40%;
+}
+.anomaly-history .status-col {
+    width: 30%;
+}
+.status-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    display: inline-block;
+}
+.status-normal {
+    background-color: var(--success, green);
+}
+.status-network {
+    background-color: var(--warning, orange);
+}
+.status-security {
+    background-color: var(--danger, red);
+}
+.status-sensor {
+    background-color: var(--primary, blue);
+}
+.anomaly-filters {
+    display: flex;
+    margin: 20px 0;
+    gap: 10px;
+}
+.filter-button {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.filter-button.active {
+    background-color: #ff3366;
+    color: white;
+    border-color: #ff3366;
+}
+.filter-button:hover:not(.active) {
+    background-color: #e5e5e5;
+}
+.no-anomalies {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+    font-style: italic;
+}
+/* Loading indicator for anomaly history */
+.loading-history {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    font-style: italic;
+    color: #666;
+}
+.loading-history .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #ff3366;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

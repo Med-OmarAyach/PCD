@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #333;
+      }
+
+      .container {
+        display: flex;
+        width: 90%;
+        max-width: 1000px;
+        align-items: center;
+        position: relative;
+      }
+
+      .illustration {
+        width: 40%;
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .illustration img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .login-container {
+        width: 60%;
+        background-color: #222;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+
+      .form-field {
+        background-color: #ddd;
+        border: none;
+        border-radius: 30px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+
+      .login-btn {
+        background-color: #e91e63;
+        color: black;
+        border: none;
+        border-radius: 30px;
+        padding: 15px 30px;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+        float: right;
+        margin-top: 30px;
+        box-shadow: 0 2px 5px rgba(233, 30, 99, 0.4);
+      }
+
+      .login-btn:hover {
+        background-color: #d81b60;
+        transform: scale(1.05);
+        transition: all 0.2s;
+      }
+
+      .signup-link {
+        display: block;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 16px;
+        color: #aaa;
+      }
+
+      .signup-link a {
+        color: #e91e63;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .signup-link a:hover {
+        text-decoration: underline;
+      }
+
+      /* Responsive styles for smaller screens */
+      @media (max-width: 900px) {
+        .container {
+          width: 95%;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+
+        .illustration {
+          width: 70%;
+          margin-bottom: 30px;
+          order: 1; /* Put illustration first */
+        }
+
+        .login-container {
+          width: 100%;
+          order: 2; /* Put form second */
+        }
+      }
+
+      @media (max-width: 480px) {
+        .illustration {
+          width: 80%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="illustration">
+        <img
+          src="{% static 'images/undraw_complete-form_aarh.png' %}"
+          alt="Login Illustration"
+        />
+      </div>
+      <div class="login-container">
+        <form method="POST" action="{% url 'sign_in' %}">
+          {% csrf_token %}
+          <input type="text" name="email" class="form-field" placeholder="Email" />
+          <input type="password" name="password" class="form-field" placeholder="Password" />
+          <button type="submit" class="login-btn">Log In</button>
+        </form>
+        <div class="signup-link">
+          Don't have an account? <a href="{% url 'sign_up' %}">Sign up here</a>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
